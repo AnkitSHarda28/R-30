@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 // Helper function to get the current day of the year
@@ -15,6 +15,8 @@ function App() {
   const [timeLeft, setTimeLeft] = useState({});
   const [timeLeftThisYear, setTimeLeftThisYear] = useState({});
   const [quote, setQuote] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // New state for password authentication
+  const [passwordInput, setPasswordInput] = useState(""); // New state for storing user input
 
   const retirementDate = new Date("2029-12-28T00:00:00"); // Fixed retirement date
   const endOfYearDate = new Date(new Date().getFullYear(), 11, 31, 23, 59, 59); // End of current year
@@ -30,7 +32,6 @@ function App() {
     "Great things never come from comfort zones.",
     "Your time is limited, don’t waste it living someone else’s life.",
     "Hardships often prepare ordinary people for an extraordinary destiny.",
-    // Add as many quotes as you like
   ];
 
   useEffect(() => {
@@ -77,6 +78,44 @@ function App() {
     return () => clearInterval(timer); // Clear the interval on component unmount
   }, [quotes]);
 
+  // Handle password authentication
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (passwordInput === "JournyR1") {
+      setIsAuthenticated(true); // If password is correct, set isAuthenticated to true
+    } else {
+      alert("Incorrect password! Please try again.");
+    }
+  };
+
+  // If the user hasn't authenticated, show the password input form
+  if (!isAuthenticated) {
+    return (
+      <div className="password-container">
+        <h2 className="password-heading">
+          🔒 Enter Password to Access the Countdown
+        </h2>
+        <form onSubmit={handlePasswordSubmit} className="password-form">
+          <input
+            type="password"
+            value={passwordInput}
+            onChange={(e) => setPasswordInput(e.target.value)}
+            placeholder="Enter password"
+            className="password-input"
+            autoFocus
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handlePasswordSubmit(e); // Handle 'Enter' key press
+            }}
+          />
+          <button type="submit" className="submit-button">
+            Unlock
+          </button>
+        </form>
+      </div>
+    );
+  }
+
+  // Once authenticated, show the actual app content
   return (
     <div className="app-container">
       <h1 className="heading">Ankit, your time Until Retirement</h1>
